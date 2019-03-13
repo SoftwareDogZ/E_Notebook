@@ -1,5 +1,6 @@
 package com.example.e_notebook;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -74,7 +75,8 @@ public class NoteBooks extends AppCompatActivity
         if(id == R.id.nav_create){
 
         }else if(id == R.id.nav_settings){
-
+            Intent intent = new Intent(NoteBooks.this, SettingPage.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
