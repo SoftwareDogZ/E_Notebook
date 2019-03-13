@@ -26,7 +26,8 @@ public class notebookspage extends AppCompatActivity {
         ((Button)findViewById(R.id.login_btn)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(notebookspage.this, NoteBooks.class);
+                startActivity(intent);
             }
         });
     }

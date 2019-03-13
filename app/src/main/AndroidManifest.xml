@@ -9,7 +9,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".RegisterPage"></activity>
+        <activity android:name=".SettingPage"></activity>
+        <activity
+            android:name=".NoteBooks"
+            android:label="@string/title_activity_note_books"
+            android:theme="@style/NoActionBar" />
+        <activity android:name=".RegisterPage" />
         <activity android:name=".notebookspage" />
         <activity android:name=".MainActivity">
             <intent-filter>
