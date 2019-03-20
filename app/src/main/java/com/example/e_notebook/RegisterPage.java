@@ -1,15 +1,20 @@
 package com.example.e_notebook;
 
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.e_notebook.EnotebookHttpClient;
 
@@ -67,32 +72,72 @@ public class RegisterPage extends AppCompatActivity {
     }
 
 
-    class OnlineRegister extends AsyncTask<String, Void, Boolean>{
+    class OnlineRegister extends AsyncTask<String, Void, String>{
+
+        ProgressDialog pDlg;
 
         @Override
-        protected Boolean doInBackground(String... strings) {
+        protected void onPreExecute() {
+            super.onPreExecute();
 
-            //需要添加判断代码
+            pDlg = new ProgressDialog(RegisterPage.this);
+            pDlg.setCancelable(false);
+            pDlg.setMessage("Registering...");
+            if(!pDlg.isShowing()) pDlg.show();
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+
+            String username = username_text.getText().toString();
+            String password = pwd_text.getText().toString();
+            String conf_pwd = conf_pwd_text.getText().toString();
+
+            if(username.isEmpty() || password.isEmpty() || conf_pwd.isEmpty() || gender_group.getCheckedRadioButtonId() == -1)
+                return "incomplete";
 
             EnotebookHttpClient ehc = new EnotebookHttpClient();
             JSONObject jsonObj = new JSONObject();
             try{
-                jsonObj.put("username", username_text.getText());
-                jsonObj.put("password", pwd_text.getText());
+                jsonObj.put("username", username);
+                jsonObj.put("password", password);
                 jsonObj.put("sex", gender);
             }catch (JSONException e){
-
+                return "Unknown Error";
             }
             String str = ehc.send("http://192.168.154.1:81/register.php", jsonObj.toString(), "application/json");
-            Log.i("get from server", str);
-            return null;
+
+            return str;
         }
 
         @Override
-        protected void onPostExecute(Boolean result) {
+        protected void onPostExecute(String result) {
             super.onPostExecute(result);
+            if(pDlg.isShowing()) pDlg.dismiss();
+            pDlg = null;
+            parseRegisterResponse(result);
         }
 
 
+    }
+
+    public void parseRegisterResponse(String response){
+        if(response.equals("incomplete")){
+            Toast.makeText(RegisterPage.this, "Please Give Your Information Details", Toast.LENGTH_SHORT).show();
+            return;
+        }else if(response.equals("Unknown Error")){
+            Toast.makeText(RegisterPage.this, "Register Failed:Unknown Error", Toast.LENGTH_SHORT).show();
+            return;
+        }else{
+            JSONObject respJson = new JSONObject();
+            String state = respJson.optString("state");
+            if(state.equals("fail")){
+                Toast.makeText(RegisterPage.this, "Register Failed:DataBaseOperation Error", Toast.LENGTH_SHORT).show();
+                return;
+            }else{
+                Toast.makeText(RegisterPage.this, "You Have Registered Successfully", Toast.LENGTH_SHORT).show();
+                this.finish();
+            }
+        }
     }
 }
