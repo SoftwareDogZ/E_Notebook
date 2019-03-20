@@ -23,7 +23,11 @@ public class RegisterPage extends AppCompatActivity {
     private TextView pwd_text;
     private TextView conf_pwd_text;
     private RadioGroup gender_group;
+    private String username;
+    private String password;
+    private String conf_pwd;
     private String gender;
+    private int radiobtn_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +42,8 @@ public class RegisterPage extends AppCompatActivity {
         gender_group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                int id = gender_group.getCheckedRadioButtonId();
-                RadioButton choise = (RadioButton)findViewById(id);
+                radiobtn_id = gender_group.getCheckedRadioButtonId();
+                RadioButton choise = (RadioButton)findViewById(radiobtn_id);
                 gender = choise.getText().toString();
             }
         });
@@ -47,6 +51,19 @@ public class RegisterPage extends AppCompatActivity {
         ((Button)findViewById(R.id.reg_register_btn)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                username = username_text.getText().toString();
+                password = pwd_text.getText().toString();
+                conf_pwd = conf_pwd_text.getText().toString();
+
+                if(username.isEmpty() || password.isEmpty() || conf_pwd.isEmpty() || radiobtn_id == -1){
+                    Toast.makeText(RegisterPage.this, "Please Give Your Information Details", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(!password.equals(conf_pwd)){
+                    Toast.makeText(RegisterPage.this, "Please Confirm Your Password", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 new OnlineRegister().execute("");
             }
         });
@@ -77,13 +94,6 @@ public class RegisterPage extends AppCompatActivity {
         @Override
         protected String doInBackground(String... strings) {
 
-            String username = username_text.getText().toString();
-            String password = pwd_text.getText().toString();
-            String conf_pwd = conf_pwd_text.getText().toString();
-
-            if(username.isEmpty() || password.isEmpty() || conf_pwd.isEmpty() || gender_group.getCheckedRadioButtonId() == -1)
-                return "incomplete";
-
             EnotebookHttpClient ehc = new EnotebookHttpClient();
             JSONObject jsonObj = new JSONObject();
             try{
@@ -106,15 +116,11 @@ public class RegisterPage extends AppCompatActivity {
             parseRegisterResponse(result);
         }
 
-
     }
 
     //parse the response of the register request
     public void parseRegisterResponse(String response){
-        if(response.equals("incomplete")){
-            Toast.makeText(RegisterPage.this, "Please Give Your Information Details", Toast.LENGTH_SHORT).show();
-            return;
-        }else if(response.equals("Unknown Error")){
+        if(response.equals("Unknown Error")){
             Toast.makeText(RegisterPage.this, "Register Failed:Unknown Error", Toast.LENGTH_SHORT).show();
             return;
         }else if(response.equals("DataBaseConnect Error")){
