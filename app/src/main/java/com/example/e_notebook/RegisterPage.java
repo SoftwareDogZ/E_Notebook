@@ -2,32 +2,20 @@ package com.example.e_notebook;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
-import android.support.constraint.ConstraintLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.e_notebook.EnotebookHttpClient;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 public class RegisterPage extends AppCompatActivity {
 
@@ -105,9 +93,9 @@ public class RegisterPage extends AppCompatActivity {
             }catch (JSONException e){
                 return "Unknown Error";
             }
-            String str = ehc.send("http://192.168.154.1:81/register.php", jsonObj.toString(), "application/json");
+            String response = ehc.send("http://192.168.154.1:81/register.php", jsonObj.toString(), "application/json");
 
-            return str;
+            return response;
         }
 
         @Override
@@ -121,6 +109,7 @@ public class RegisterPage extends AppCompatActivity {
 
     }
 
+    //parse the response of the register request
     public void parseRegisterResponse(String response){
         if(response.equals("incomplete")){
             Toast.makeText(RegisterPage.this, "Please Give Your Information Details", Toast.LENGTH_SHORT).show();
@@ -128,16 +117,21 @@ public class RegisterPage extends AppCompatActivity {
         }else if(response.equals("Unknown Error")){
             Toast.makeText(RegisterPage.this, "Register Failed:Unknown Error", Toast.LENGTH_SHORT).show();
             return;
+        }else if(response.equals("DataBaseConnect Error")){
+            Toast.makeText(RegisterPage.this, "Register Failed:Cannot Connect to Database", Toast.LENGTH_SHORT).show();
+            return;
+        }else if(response.equals("DataBaseQuery Error")){
+            Toast.makeText(RegisterPage.this, "Register Failed:The User Has Existed", Toast.LENGTH_SHORT).show();
+            return;
+        }else if(response.equals("DataBaseInsert Error")){
+            Toast.makeText(RegisterPage.this, "Register Failed:Cannot Create The Account", Toast.LENGTH_SHORT).show();
+            return;
+        }else if(response.equals("success")){
+            this.finish();
         }else{
-            JSONObject respJson = new JSONObject();
-            String state = respJson.optString("state");
-            if(state.equals("fail")){
-                Toast.makeText(RegisterPage.this, "Register Failed:DataBaseOperation Error", Toast.LENGTH_SHORT).show();
-                return;
-            }else{
-                Toast.makeText(RegisterPage.this, "You Have Registered Successfully", Toast.LENGTH_SHORT).show();
-                this.finish();
-            }
+            Toast.makeText(RegisterPage.this, "Register Failed:Unknown Error", Toast.LENGTH_SHORT).show();
+            return;
         }
     }
 }
+

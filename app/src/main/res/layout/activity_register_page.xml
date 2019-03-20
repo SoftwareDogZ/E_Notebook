@@ -80,7 +80,8 @@
             android:layout_height="wrap_content"
             android:checked="false"
             android:text="male"
-            android:textColor="@android:color/darker_gray" />
+            android:textColor="@android:color/darker_gray"
+            android:buttonTint="#4642ab"/>
 
         <RadioButton
             android:id="@+id/female_btn"
@@ -89,7 +90,8 @@
             android:layout_weight="1"
             android:outlineAmbientShadowColor="#4642ab"
             android:text="female"
-            android:textColor="@android:color/darker_gray" />
+            android:textColor="@android:color/darker_gray"
+            android:buttonTint="#4642ab"/>
 
         <RadioButton
             android:id="@+id/unspeakable_btn"
@@ -97,7 +99,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="unspeakable"
-            android:textColor="@android:color/darker_gray" />
+            android:textColor="@android:color/darker_gray"
+            android:buttonTint="#4642ab"/>
 
     </RadioGroup>
 

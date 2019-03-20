@@ -30,12 +30,15 @@ public class EnotebookHttpClient {
             os.close();
             //you must call this function and then the data would be send to Server
             InputStream is = conn.getInputStream();
-            byte[] responseBytes = new byte[1024];
-            StringBuilder responseStr = new StringBuilder();
-            while(is.read(responseBytes) != -1)
-                responseStr.append(new String(responseBytes));
+            StringBuffer buffer = new StringBuffer();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
-            return responseStr.toString();
+            String line;
+            while((line = reader.readLine()) != null){
+                buffer.append(line);
+            }
+
+            return buffer.toString();
         }catch (Exception e){
             e.printStackTrace();
             return e.getMessage();
