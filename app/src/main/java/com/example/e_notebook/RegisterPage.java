@@ -103,7 +103,7 @@ public class RegisterPage extends AppCompatActivity {
             }catch (JSONException e){
                 return "Unknown Error";
             }
-            String response = ehc.send("http://192.168.154.1:81/register.php", jsonObj.toString(), "application/json");
+            String response = ehc.send("http://10.253.221.78:81/Enotebook_server/register.php", jsonObj.toString(), "application/json");
 
             return response;
         }

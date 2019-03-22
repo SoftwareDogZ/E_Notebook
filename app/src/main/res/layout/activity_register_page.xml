@@ -119,14 +119,14 @@
         android:id="@+id/reg_register_btn"
         android:layout_width="150dp"
         android:layout_height="40dp"
-        android:layout_marginEnd="25dp"
-        android:layout_marginRight="25dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginLeft="40dp"
         android:background="#4642ab"
         android:text="Register"
         android:textColor="@android:color/white"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/reg_cancel_btn"
-        app:layout_constraintEnd_toStartOf="@+id/reg_cancel_btn"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/reg_cancel_btn"
         app:layout_constraintVertical_bias="0.0" />
 

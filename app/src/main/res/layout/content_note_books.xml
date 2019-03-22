@@ -8,6 +8,9 @@
     tools:context=".NoteBooks"
     tools:showIn="@layout/app_bar_note_books">
 
-
+    <include
+        layout="@layout/note_books"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </android.support.constraint.ConstraintLayout>
