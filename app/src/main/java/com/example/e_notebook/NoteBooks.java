@@ -30,8 +30,10 @@ import java.util.List;
 
 import javaclass.*;
 
+
 public class NoteBooks extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    public static NoteBooks instance;
 
     private List<Notebook> mNotebookList = new ArrayList<>();
     RecyclerView recyclerView;
@@ -54,6 +56,8 @@ public class NoteBooks extends AppCompatActivity
 
         recyclerView = (RecyclerView)findViewById(R.id.notebook_list);
         new FillNoteboolList().execute("");
+
+        instance = this;
     }
 
     @Override
@@ -193,7 +197,7 @@ public class NoteBooks extends AppCompatActivity
             String[] NotebookList = response.split("&");
             for(int i = 0; i < NotebookList.length; i++){
                 String[] notebook = NotebookList[i].split("#");
-                mNotebookList.add(new Notebook(notebook[i], R.drawable.defaultnote));
+                mNotebookList.add(new Notebook(notebook[1], R.drawable.defaultnote));
             }
         }
     }
@@ -255,3 +259,4 @@ public class NoteBooks extends AppCompatActivity
         }
     }
 }
+

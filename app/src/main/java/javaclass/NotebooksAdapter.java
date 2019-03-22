@@ -45,7 +45,12 @@ public class NotebooksAdapter extends RecyclerView.Adapter<NotebooksAdapter.View
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.notebook_view, viewGroup, false);
         final ViewHolder viewHolder = new ViewHolder(view);
 
-        //进入对应notebook的代码
+        viewHolder.NotebookView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
         return viewHolder;
     }

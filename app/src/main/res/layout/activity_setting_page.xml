@@ -24,21 +24,57 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
         android:layout_marginLeft="15dp"
-        android:text="TextView"
         android:textColor="@android:color/white"
         android:textSize="30sp"
         app:layout_constraintStart_toEndOf="@+id/set_avatar_img"
-        app:layout_constraintTop_toTopOf="@+id/set_avatar_img" />
+        app:layout_constraintTop_toTopOf="@+id/set_avatar_img"
+        android:enabled="false"/>
 
     <TextView
-        android:id="@+id/set_email_text"
+        android:id="@+id/set_gender_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
         android:textColor="@android:color/white"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/set_avatar_img"
-        app:layout_constraintStart_toStartOf="@+id/set_username_text" />
+        app:layout_constraintStart_toStartOf="@+id/set_username_text"
+        android:enabled="false"/>
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/set_phone_text"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="40dp"
+        android:enabled="false"
+        android:hint="Your Phone"
+        app:layout_constraintBottom_toTopOf="@+id/set_email_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:met_floatingLabel="highlight"
+        app:met_floatingLabelText="Your Phone"
+        app:met_primaryColor="#4642ab" />
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/set_email_text"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="120dp"
+        android:enabled="false"
+        android:hint="Your Email"
+        app:layout_constraintBottom_toTopOf="@+id/set_logout_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:met_floatingLabel="highlight"
+        app:met_floatingLabelText="Your Email"
+        app:met_primaryColor="#4642ab"/>
 
     <Button
         android:id="@+id/set_logout_btn"
@@ -57,4 +93,18 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/set_edit_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        android:text="Edit"
+        android:textColor="@android:color/holo_blue_light"
+        android:textSize="18sp"
+        android:textStyle="italic"
+        android:typeface="monospace"
+        app:layout_constraintBottom_toTopOf="@+id/set_logout_btn"
+        app:layout_constraintEnd_toEndOf="@+id/set_email_text" />
+
 </android.support.constraint.ConstraintLayout>
