@@ -11,13 +11,18 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Set;
+
 public class SettingPage extends AppCompatActivity {
 
     Handler mHandler;
+    TextView username_text;
+    TextView sex_text;
     TextView phone_text;
     TextView email_text;
     TextView edit_text;
@@ -27,6 +32,8 @@ public class SettingPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting_page);
 
+        username_text = (TextView)findViewById(R.id.set_username_text);
+        sex_text = (TextView)findViewById(R.id.set_gender_text);
         phone_text = (TextView)findViewById(R.id.set_phone_text);
         email_text = (TextView)findViewById(R.id.set_email_text);
         edit_text = (TextView)findViewById(R.id.set_edit_text);
@@ -63,6 +70,15 @@ public class SettingPage extends AppCompatActivity {
                         phone_text.setEnabled(false);
                         email_text.setEnabled(false);
                         edit_text.setText("Edit");
+                        new SaveUserInfo().execute("");
+                        break;
+                    }
+                    case 3:{
+                        String[] userinfo = msg.obj.toString().split("&");
+                        username_text.setText(userinfo[0]);
+                        sex_text.setText(userinfo[1]);
+                        email_text.setText(userinfo[2]);
+                        phone_text.setText(userinfo[3]);
                         break;
                     }
                     default:break;
@@ -88,6 +104,8 @@ public class SettingPage extends AppCompatActivity {
                 }).start();
             }
         });
+
+        new SetUserInfo().execute("");
     }
 
     //set the username and gender
@@ -104,18 +122,82 @@ public class SettingPage extends AppCompatActivity {
                 return "Unknown Error";
             }
 
-            String response = ehc.send("http://10.253.221.78:81/Enotebook_server/", jsonObject.toString(), "application/json");
+            String response = ehc.send("http://10.253.221.78:81/Enotebook_server/getuserinfo.php", jsonObject.toString(), "application/json");
             return response;
         }
 
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
+            parseGetUserInfoResponse(result);
         }
     }
 
     //parse the response of the getuserinfo request
-    public void parseGetUserInfoResponse(String response){
+    public void parseGetUserInfoResponse(final String response){
+        if(response.equals("Unknown Error")){
+            Toast.makeText(SettingPage.this, "Error:Unknown Error", Toast.LENGTH_SHORT).show();
+            return;
+        }else if(response.equals("DataBaseConnect Error")){
+            Toast.makeText(SettingPage.this, "Error:DataBaseConnect Error", Toast.LENGTH_SHORT).show();
+            return;
+        }else if(response.equals("DataBaseQuery Error")){
+            Toast.makeText(SettingPage.this, "Error:DataBaseQuery Error", Toast.LENGTH_SHORT).show();
+            return;
+        }else{
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Message msg = new Message();
+                    msg.what = 3;
+                    msg.obj = response;
+                    mHandler.sendMessage(msg);
+                }
+            }).start();
+        }
+    }
 
+    //save userinfo that user have input
+    class SaveUserInfo extends AsyncTask<String, Void, String>{
+        @Override
+        protected String doInBackground(String... strings) {
+            String email = email_text.getText().toString();
+            String phone = phone_text.getText().toString();
+            String username = username_text.getText().toString();
+            EnotebookHttpClient ehc = new EnotebookHttpClient();
+            JSONObject jsonObject = new JSONObject();
+            try{
+                jsonObject.put("username", username);
+                jsonObject.put("email", email);
+                jsonObject.put("phone", phone);
+            }catch (JSONException e){
+                return "Unknown Error";
+            }
+
+            String response = ehc.send("http://10.253.221.78:81/Enotebook_server/senduserinfo.php", jsonObject.toString(), "application/json");
+            return response;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            parseSendUserInfoResponse(result);
+        }
+    }
+
+    //parse the response of the SendUserInfo request
+    public void parseSendUserInfoResponse(String response){
+        if(response.equals("Unknown Error")){
+            Toast.makeText(SettingPage.this, "Upload Error:Unknown Error", Toast.LENGTH_SHORT).show();
+            return;
+        }else if(response.equals("DataBaseConnect Error")){
+            Toast.makeText(SettingPage.this, "Upload Error:DataBaseConnect Error", Toast.LENGTH_SHORT).show();
+            return;
+        }else if(response.equals("DataBaseUpdate Error")){
+            Toast.makeText(SettingPage.this, "Upload Error:DataBaseUpdate Error", Toast.LENGTH_SHORT).show();
+            return;
+        }else{
+            Toast.makeText(SettingPage.this, "Setting Successfully", Toast.LENGTH_SHORT).show();
+        }
     }
 }
