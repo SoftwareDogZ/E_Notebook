@@ -18,6 +18,8 @@ import org.json.JSONObject;
 
 import java.util.Set;
 
+import javaclass.IpConfig;
+
 public class SettingPage extends AppCompatActivity {
 
     Handler mHandler;
@@ -49,6 +51,8 @@ public class SettingPage extends AppCompatActivity {
                 Intent intent = new Intent(SettingPage.this, notebookspage.class);
                 startActivity(intent);
                 NoteBooks.instance.finish();
+                Notes.instance.finish();
+                UserNoteContent.instance.finish();
                 finish();
             }
         });
@@ -122,7 +126,7 @@ public class SettingPage extends AppCompatActivity {
                 return "Unknown Error";
             }
 
-            String response = ehc.send("http://10.253.221.78:81/Enotebook_server/getuserinfo.php", jsonObject.toString(), "application/json");
+            String response = ehc.send(new IpConfig().getIpPath()+"getuserinfo.php", jsonObject.toString(), "application/json");
             return response;
         }
 
@@ -174,7 +178,7 @@ public class SettingPage extends AppCompatActivity {
                 return "Unknown Error";
             }
 
-            String response = ehc.send("http://10.253.221.78:81/Enotebook_server/senduserinfo.php", jsonObject.toString(), "application/json");
+            String response = ehc.send(new IpConfig().getIpPath()+"senduserinfo.php", jsonObject.toString(), "application/json");
             return response;
         }
 

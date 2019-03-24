@@ -17,6 +17,8 @@ import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javaclass.IpConfig;
+
 public class RegisterPage extends AppCompatActivity {
 
     private TextView username_text;
@@ -103,7 +105,7 @@ public class RegisterPage extends AppCompatActivity {
             }catch (JSONException e){
                 return "Unknown Error";
             }
-            String response = ehc.send("http://10.253.221.78:81/Enotebook_server/register.php", jsonObj.toString(), "application/json");
+            String response = ehc.send(new IpConfig().getIpPath()+"register.php", jsonObj.toString(), "application/json");
 
             return response;
         }

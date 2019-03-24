@@ -16,7 +16,7 @@ public class myItemDecoration extends RecyclerView.ItemDecoration{
 
     public myItemDecoration(Context context){
         mPaint = new Paint();
-        mPaint.setColor(context.getResources().getColor(R.color.colorAccent)); //set the paint color
+        mPaint.setColor(context.getResources().getColor(R.color.myMainColor)); //set the paint color
     }
 
     @Override

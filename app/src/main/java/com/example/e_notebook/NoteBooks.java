@@ -55,7 +55,7 @@ public class NoteBooks extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         recyclerView = (RecyclerView)findViewById(R.id.notebook_list);
-        new FillNoteboolList().execute("");
+        new GetNoteList().execute("");
 
         instance = this;
     }
@@ -112,10 +112,10 @@ public class NoteBooks extends AppCompatActivity
 
 
     //initial the RecyclerView which contains the notebook items
-    public void initRecyclerView(){
+    private void initRecyclerView(){
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
-        NotebooksAdapter notebooksAdapter = new NotebooksAdapter(mNotebookList);
+        NotebooksAdapter notebooksAdapter = new NotebooksAdapter(mNotebookList, NoteBooks.this);
         recyclerView.setAdapter(notebooksAdapter);
         recyclerView.addItemDecoration(new myItemDecoration(NoteBooks.this));
     }
@@ -144,7 +144,7 @@ public class NoteBooks extends AppCompatActivity
     }
 
     //fill the mNotebookList
-    class FillNoteboolList extends AsyncTask<String, Void, String>{
+    class GetNoteList extends AsyncTask<String, Void, String>{
         ProgressDialog pDlg = new ProgressDialog(NoteBooks.this);
         @Override
         protected void onPreExecute() {
@@ -167,7 +167,7 @@ public class NoteBooks extends AppCompatActivity
                 return "Unknown Error";
             }
 
-            String response = ehc.send("http://10.253.221.78:81/Enotebook_server/sendnotebooklist.php", jsonObject.toString(), "application/json");
+            String response = ehc.send(new IpConfig().getIpPath()+"sendnotebooklist.php", jsonObject.toString(), "application/json");
 
             return response;
         }
@@ -221,6 +221,7 @@ public class NoteBooks extends AppCompatActivity
             JSONObject jsonObject;
             SharedPreferences pref = getSharedPreferences("who_login", MODE_PRIVATE);
             String who_login = pref.getString("WhoIsLogin", "");
+            if(who_login.isEmpty()) return "You Are Offline";
             try{
                 for(int i = 0; i < mNotebookList.size(); i++){
                     jsonObject = new JSONObject();
@@ -235,7 +236,7 @@ public class NoteBooks extends AppCompatActivity
                 return "Unknown Error";
             }
 
-            String response = ehc.send("http://10.253.221.78:81/Enotebook_server/getnotebooklist.php", jsonArray.toString(), "application/json");
+            String response = ehc.send(new IpConfig().getIpPath()+"getnotebooklist.php", jsonArray.toString(), "application/json");
             return response;
         }
 
@@ -250,7 +251,10 @@ public class NoteBooks extends AppCompatActivity
 
     //parse the response of sending notebooklist request
     public void parseSendNotebookResponse(String response){
-        if(response.equals("Unknown Error")){
+        if(response.equals("You Are Offline")){
+            Toast.makeText(NoteBooks.this, "Create Failed:You Are Offline", Toast.LENGTH_SHORT).show();
+            return;
+        }else if(response.equals("Unknown Error")){
             Toast.makeText(NoteBooks.this, "Create Failed:Unknown Error", Toast.LENGTH_SHORT).show();
             return;
         }else if(response.equals("success")){
