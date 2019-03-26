@@ -50,16 +50,18 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
     }
 
     @Override
-    public void onBindViewHolder(NoteViewHolder noteViewHolder, int i) {
-        Note note = mNoteList.get(i);
+    public void onBindViewHolder(final NoteViewHolder noteViewHolder, int i) {
+        final Note note = mNoteList.get(i);
         noteViewHolder.NoteImageView.setImageBitmap(note.getBitmap());
         noteViewHolder.NoteTextView.setText(note.getTitle());
-        noteViewHolder.NoteView.setBackgroundColor(R.color.myMainColor);
+        //noteViewHolder.NoteView.setBackgroundColor(mContext.getResources().getColor(R.color.myMainColor));
 
         noteViewHolder.NoteView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String notename = noteViewHolder.NoteTextView.getText().toString();
                 Intent intent = new Intent(mContext, UserNoteContent.class);
+                intent.putExtra("notename", notename);
                 mContext.startActivity(intent);
             }
         });

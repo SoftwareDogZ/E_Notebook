@@ -1,17 +1,22 @@
 package com.example.e_notebook;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataOutputStream;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import javaclass.IpConfig;
 
 public class EnotebookHttpClient {
 
@@ -69,5 +74,59 @@ public class EnotebookHttpClient {
             e.printStackTrace();
         }
         return bitmap;
+    }
+
+    //upload picture to server
+    public String sendBitmapToServer(String imgURL){
+        String[] strings = imgURL.split("/");
+        String filename = strings[strings.length - 1];
+        HttpURLConnection conn = null;
+        String boundary = "**LIML**";
+        String end = "\r\n";
+        String hyphens = "--";
+        try{
+            URL url = new URL(new IpConfig().getIpPath()+"getpicture.php");
+            conn = (HttpURLConnection)url.openConnection();
+            conn.setUseCaches(false);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Connection", "Keep-Alive");
+            conn.setRequestProperty("Charset", "UTF-8");
+            conn.setRequestProperty("Content-Type", "multipart/form-data;boundary="+boundary);
+            OutputStream os = conn.getOutputStream();
+            os.write(hyphens.getBytes());
+            os.write(boundary.getBytes());
+            os.write(end.getBytes());
+            os.write(("Content-Disposition:form-data;"+"name=\"file\";filename=\""+filename+"\""+end).getBytes());
+            os.write(end.getBytes());
+
+            FileInputStream fstream = new FileInputStream(imgURL);
+            int buffersize = 8192;
+            byte[] buffer = new byte[buffersize];
+            int length = -1;
+            while((length = fstream.read(buffer)) != -1)
+                os.write(buffer, 0, length);
+
+            os.write(end.getBytes());
+            os.write((hyphens+boundary+hyphens+end).getBytes());
+
+            fstream.close();
+            os.flush();
+            os.close();
+
+            InputStream is = conn.getInputStream();
+            StringBuffer inBuffer = new StringBuffer();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            String line;
+            while((line = reader.readLine()) != null)
+                inBuffer.append(line);
+            return inBuffer.toString();
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return e.getMessage();
+        }finally {
+            if(conn != null)
+                conn.disconnect();
+        }
     }
 }

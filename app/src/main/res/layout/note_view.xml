@@ -17,8 +17,8 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_gravity="left"
-        android:gravity="center"
-        android:textColor="@android:color/white"
+        android:gravity="center|top"
+        android:textColor="@android:color/holo_purple"
         android:textSize="36sp" />
 
 </LinearLayout>

@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -37,6 +40,10 @@ public class NoteBooks extends AppCompatActivity
 
     private List<Notebook> mNotebookList = new ArrayList<>();
     RecyclerView recyclerView;
+    TextView username_text;
+    TextView email_text;
+    String username;
+    Handler mHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +62,21 @@ public class NoteBooks extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         recyclerView = (RecyclerView)findViewById(R.id.notebook_list);
+
+        SharedPreferences pref = getSharedPreferences("who_login", MODE_PRIVATE);
+        username = pref.getString("WhoIsLogin", "");
+
+        mHandler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                if(msg.what == 1){
+                    username_text.setText(username);
+                    email_text.setText((String)msg.obj);
+                }
+            }
+        };
+
         new GetNoteList().execute("");
 
         instance = this;
@@ -74,6 +96,9 @@ public class NoteBooks extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.note_books, menu);
+        username_text = (TextView)findViewById(R.id.menuname_text);
+        email_text = (TextView)findViewById(R.id.menuemail_text);
+        new GetNameAndEmail().execute("");
         return true;
     }
 
@@ -260,6 +285,43 @@ public class NoteBooks extends AppCompatActivity
         }else if(response.equals("success")){
             Toast.makeText(NoteBooks.this, "Create Successfully", Toast.LENGTH_SHORT).show();
             initRecyclerView();
+        }
+    }
+
+    //get username and email
+    class GetNameAndEmail extends AsyncTask<String, Void, Void>{
+        @Override
+        protected Void doInBackground(String... strings) {
+            EnotebookHttpClient ehc = new EnotebookHttpClient();
+            JSONObject jsonObject = new JSONObject();
+            try{
+                jsonObject.put("username", username);
+            }catch (JSONException e){
+                Toast.makeText(NoteBooks.this, "Get UserInfo Failed:Unknown Error", Toast.LENGTH_SHORT).show();
+                return null;
+            }
+
+            String response = ehc.send(new IpConfig().getIpPath()+"getuserinfo.php", jsonObject.toString(), "application/json");
+            if(response.equals("DataBaseConnect Error")){
+                Toast.makeText(NoteBooks.this, "Get UserInfo Error:DataBaseConnect Error", Toast.LENGTH_SHORT).show();
+                return null;
+            }else if(response.equals("DataBaseQuery Error")){
+                Toast.makeText(NoteBooks.this, "Get UserInfo Error:DataBaseQuery Error", Toast.LENGTH_SHORT).show();
+                return null;
+            }else{
+                String[] responses = response.split("&");
+                final String email = responses[2];
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Message msg = new Message();
+                        msg.what = 1;
+                        msg.obj = email;
+                        mHandler.sendMessage(msg);
+                    }
+                }).start();
+            }
+            return null;
         }
     }
 }

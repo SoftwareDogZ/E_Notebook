@@ -13,8 +13,12 @@ import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.widget.EditText;
 
+import com.example.e_notebook.EnotebookHttpClient;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import javaclass.IpConfig;
 
 public class PictureAndTextEditorView extends AppCompatEditText {
     private final String TAG = "PATEditorView";
@@ -52,12 +56,12 @@ public class PictureAndTextEditorView extends AppCompatEditText {
         if (mContentList.size() > 0) {
             for (String str : mContentList) {
                 if (str.indexOf(mBitmapTag) != -1) {//judge the path whether point to a picture
-                    String path = str.replace(mBitmapTag, "");//还原地址字符串
+                    String path = str.replace(mBitmapTag, "");
+                    //insert picture
                     Bitmap bitmap = getSmallBitmap(path, 480, 800);
-                    //插入图片
-                    insertBitmap(path, bitmap);
+                    insertBitmap(path, bitmap, 1);
                 } else {
-                    //插入文字
+                    //insert words
                     SpannableString ss = new SpannableString(str);
                     append(ss);
                 }
@@ -65,50 +69,71 @@ public class PictureAndTextEditorView extends AppCompatEditText {
         }
     }
 
+
     /**
-     * 插入图片
+     * insert bitmap
      *
      * @param bitmap
      * @param path
      * @return
      */
-    private SpannableString insertBitmap(String path, Bitmap bitmap) {
+    private SpannableString insertBitmap(String path, Bitmap bitmap, int flag) {
         Editable edit_text = getEditableText();
-        int index = getSelectionStart(); // 获取光标所在位置
-        //插入换行符，使图片单独占一行
+        int index = getSelectionStart(); // get cursor pos
         SpannableString newLine = new SpannableString("\n");
-        edit_text.insert(index, newLine);//插入图片前换行
-        // 创建一个SpannableString对象，以便插入用ImageSpan对象封装的图像
+        if(flag == 1){
+            //insert line break
+            edit_text.insert(index, newLine);
+        }
+        //create a SpannableString Object to be replaced by the ImageSpan Object
+        if(path.indexOf("/") != -1){ //only keep the img name in variable 'path'
+            String[] path_strs = path.split("/");
+            path = path_strs[path_strs.length - 1];
+        }
         path = mBitmapTag + path + mBitmapTag;
         SpannableString spannableString = new SpannableString(path);
-        // 根据Bitmap对象创建ImageSpan对象
+        // Create a ImageSpan through a bitmap
         //ImageSpan imageSpan = new ImageSpan(mContext, bitmap);
         ImageSpan imageSpan = new ImageSpan(bitmap);
-        // 用ImageSpan对象替换你指定的字符串
+        // replace the SpannableString with ImageSpan
         spannableString.setSpan(imageSpan, 0, path.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        // 将选择的图片追加到EditText中光标所在位置
+
         if (index < 0 || index >= edit_text.length()) {
             edit_text.append(spannableString);
         } else {
             edit_text.insert(index, spannableString);
         }
-        edit_text.insert(index, newLine);//插入图片后换行
+        if(flag == 1){
+            edit_text.insert(index, newLine);
+        }
         return spannableString;
     }
 
 
     /**
-     * 插入图片
+     * insert the bitmap
      *
      * @param path
      */
-    public void insertBitmap(String path) {
+    public void insertBitmap(String path, int flag) {
         Bitmap bitmap = getSmallBitmap(path, 480, 800);
-        insertBitmap(path, bitmap);
+        insertBitmap(path, bitmap, flag);
+    }
+
+    //insert the bitmap from the server
+    public void insertBitmapFromServer(String path, Bitmap bitmap, int flag){
+        insertBitmap(path, bitmap, flag);
+    }
+
+    //insert the words from server
+    public void insertWordsFromServer(String words){
+        String realWords = words.replace("**LIML**", mNewLineTag);
+        SpannableString ss = new SpannableString(realWords);
+        append(ss);
     }
 
     /**
-     * 用集合的形式获取控件里的内容
+     * get the content list in the edittext
      *
      * @return
      */
@@ -116,6 +141,7 @@ public class PictureAndTextEditorView extends AppCompatEditText {
         if (mContentList == null) {
             mContentList = new ArrayList<String>();
         }
+        String s = getText().toString();
         String content = getText().toString().replaceAll(mNewLineTag, "**LIML**");
         if (content.length() > 0 && content.contains(mBitmapTag)) {
             String[] split = content.split("☆");
@@ -131,7 +157,7 @@ public class PictureAndTextEditorView extends AppCompatEditText {
     }
 
     /**
-     * 设置显示的内容集合
+     * set the content list
      *
      * @param contentList
      */
@@ -143,6 +169,7 @@ public class PictureAndTextEditorView extends AppCompatEditText {
         this.mContentList.addAll(contentList);
         insertData();
     }
+
 
     float oldY = 0;
 
@@ -168,7 +195,7 @@ public class PictureAndTextEditorView extends AppCompatEditText {
         return super.onTouchEvent(event);
     }
 
-    // 根据路径获得图片并压缩，返回bitmap用于显示
+    // compress the bitmap
     public Bitmap getSmallBitmap(String filePath, int reqWidth, int reqHeight) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -191,7 +218,7 @@ public class PictureAndTextEditorView extends AppCompatEditText {
         return bitmap;
     }
 
-    //计算图片的缩放值
+    //calculate inSampleSize
     public int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         final int height = options.outHeight;
         final int width = options.outWidth;

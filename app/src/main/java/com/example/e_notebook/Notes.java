@@ -48,6 +48,11 @@ public class Notes extends AppCompatActivity {
         recyclerView = findViewById(R.id.note_list);
         Intent intent = getIntent();
         mNoteName = getIntent().getStringExtra("notename");
+        mNoteName = mNoteName.replace(" ", "");
+        SharedPreferences pref = getSharedPreferences("notebookname", MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("notebookname", mNoteName);
+        editor.apply();
 
         ((FloatingActionButton)findViewById(R.id.createnote_fab)).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,7 +71,7 @@ public class Notes extends AppCompatActivity {
                                     }
                                 }
 
-                                new SendNoteList().execute(mNoteName, inputText.toString(), new IpConfig().getRoot()+"usernotes/Lemon/notelist_TravelNote/pictures/test.jpg");
+                                new SendNoteList().execute(mNoteName, inputText.toString(), new IpConfig().getRoot()+"pictures/default.png");
                             }
                         })
                         .setNegativeButton("Cancel", new InputDialog.ButtonActionListener() {
@@ -122,8 +127,7 @@ public class Notes extends AppCompatActivity {
                     Note note = mNoteList.get(i);
                     jsonObject.put("id", i);
                     jsonObject.put("title", note.getTitle());
-                    //jsonObject.put("imgname", String.valueOf(System.currentTimeMillis()));
-                    jsonObject.put("imgname", "test");
+                    jsonObject.put("imgname", "default.jpg");
                     jsonObject.put("username", who_login);
                     jsonObject.put("notebook", notebook_name);
                     jsonArray.put(jsonObject);

@@ -15,7 +15,7 @@ public class myStaggeredItemDecoration extends RecyclerView.ItemDecoration {
 
     public myStaggeredItemDecoration(Context context){
         mPaint = new Paint();
-        mPaint.setColor(context.getResources().getColor(R.color.myMainColor)); //set the paint color
+        mPaint.setColor(context.getResources().getColor(R.color.paintColor)); //set the paint color
     }
 
     @Override
