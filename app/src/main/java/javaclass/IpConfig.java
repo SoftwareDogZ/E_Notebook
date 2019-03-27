@@ -5,8 +5,8 @@ public class IpConfig {
     private String root;
 
     public IpConfig(){
-        ipPath = "http://10.253.221.78:81/Enotebook_server/";
-        root = "http://10.253.221.78:81/";
+        ipPath = "http://118.24.30.60/Enotebook_server/";
+        root = "http://118.24.30.60/";
     }
 
     public String getIpPath(){

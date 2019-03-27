@@ -127,7 +127,7 @@ public class Notes extends AppCompatActivity {
                     Note note = mNoteList.get(i);
                     jsonObject.put("id", i);
                     jsonObject.put("title", note.getTitle());
-                    jsonObject.put("imgname", "default.jpg");
+                    jsonObject.put("imgname", "default.png");
                     jsonObject.put("username", who_login);
                     jsonObject.put("notebook", notebook_name);
                     jsonArray.put(jsonObject);
@@ -137,7 +137,6 @@ public class Notes extends AppCompatActivity {
             }
 
             String response = ehc.send(new IpConfig().getIpPath()+"getnotelist.php", jsonArray.toString(), "application/json");
-            Log.i("from server", response);
             return response;
         }
 

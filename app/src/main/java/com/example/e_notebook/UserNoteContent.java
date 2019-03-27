@@ -203,9 +203,9 @@ public class UserNoteContent extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
+            parseGetNoteContent(result);
             if(pDlg.isShowing()) pDlg.dismiss();
             pDlg = null;
-            parseGetNoteContent(result);
         }
 
         //parse the response of get note content request
@@ -267,7 +267,6 @@ public class UserNoteContent extends AppCompatActivity {
         protected String doInBackground(String... strings) {
             EnotebookHttpClient ehc = new EnotebookHttpClient();
             String response = ehc.send(new IpConfig().getIpPath()+"getnoteformat.php", strings[0], "application/json");
-            Log.i("from server", response);
             return response;
         }
 

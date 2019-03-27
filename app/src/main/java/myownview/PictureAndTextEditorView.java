@@ -86,10 +86,10 @@ public class PictureAndTextEditorView extends AppCompatEditText {
             edit_text.insert(index, newLine);
         }
         //create a SpannableString Object to be replaced by the ImageSpan Object
-        if(path.indexOf("/") != -1){ //only keep the img name in variable 'path'
-            String[] path_strs = path.split("/");
-            path = path_strs[path_strs.length - 1];
-        }
+//        if(path.indexOf("/") != -1){ //only keep the img name in variable 'path'
+//            String[] path_strs = path.split("/");
+//            path = path_strs[path_strs.length - 1];
+//        }
         path = mBitmapTag + path + mBitmapTag;
         SpannableString spannableString = new SpannableString(path);
         // Create a ImageSpan through a bitmap
